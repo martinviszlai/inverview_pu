@@ -16,3 +16,24 @@ Content-Type: application/json
 # get details of code review
 GET http://localhost:8080/review?reviewId=1
 Accept: application/json
+
+###
+#create a review comment
+POST http://localhost:8080/comment
+Content-Type: application/json
+
+{
+  "codeReviewId": 1,
+  "author": "Bilbo.Baggins@shire.com",
+  "content": "This is ingenious!",
+  "position": "com.infobip.interviewdemo.api.CrudController.commentService#45",
+  "createdAt": 1663661136000,
+  "updatedAt": 1663661142000,
+  "resolvedAt": 1663661215000,
+  "isTask": false
+}
+
+###
+# get details of comment
+GET http://localhost:8080/comment?commentId=1
+Accept: application/json

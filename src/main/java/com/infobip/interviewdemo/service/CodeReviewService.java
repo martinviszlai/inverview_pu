@@ -5,6 +5,7 @@ import com.infobip.interviewdemo.domain.CodeReviewState;
 import com.infobip.interviewdemo.dto.CodeReviewCreateRequest;
 import com.infobip.interviewdemo.dto.CodeReviewDetailResponse;
 import com.infobip.interviewdemo.repository.CodeReviewRepository;
+import com.infobip.interviewdemo.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,24 +18,27 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class CodeReviewService {
 
-    private final CodeReviewRepository repository;
+    private final CodeReviewRepository codeReviewRepository;
+    private final CommentRepository commentRepository;
 
     public Long createCodeReview(CodeReviewCreateRequest codeReviewRequest) {
         var codeReviewEntity = mapRequestToEntity(codeReviewRequest);
         codeReviewEntity.setState(CodeReviewState.OPEN);
 
-        repository.save(codeReviewEntity);
+        codeReviewRepository.save(codeReviewEntity);
 
         return codeReviewEntity.getId();
     }
 
     public CodeReviewDetailResponse getCodeReview(Long id) {
-        var codeReview = repository.findById(id);
+        var codeReview = codeReviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Code review with provided id not found!"));
+        var commentsCount = commentRepository.countAllByCodeReview_Id(id);
 
-        return mapEntityToResponse(codeReview.orElseThrow(() -> new RuntimeException("Code review with provided id not found!")));
+        return mapEntityToResponse(codeReview, commentsCount);
     }
 
-    private CodeReviewDetailResponse mapEntityToResponse(CodeReviewEntity entity) {
+    private CodeReviewDetailResponse mapEntityToResponse(CodeReviewEntity entity, Long commentsCount) {
         return CodeReviewDetailResponse.builder()
                 .id(entity.getId())
                 .name(entity.getName())
@@ -43,6 +47,7 @@ public class CodeReviewService {
                 .author(entity.getAuthor())
                 .reviewers(entity.getReviewers())
                 .state(entity.getState())
+                .commentsCount(commentsCount)
                 .build();
     }
 

@@ -17,4 +17,5 @@ public class CodeReviewDetailResponse {
     private String author;
     private List<String> reviewers;
     private CodeReviewState state;
+    private Long commentsCount;
 }
