@@ -1,0 +1,18 @@
+# create a code review
+POST http://localhost:8080/review
+Content-Type: application/json
+
+{
+  "name": "Trip to Mount Doom",
+  "sourceBranch": "develop",
+  "targetBranch": "master",
+  "author": "Elrond@rivendell.com",
+  "reviewers": [
+    "Gandalf.The.Grey@wizzard.com"
+  ]
+}
+
+###
+# get details of code review
+GET http://localhost:8080/review?reviewId=1
+Accept: application/json
